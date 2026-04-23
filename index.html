@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>اي ام سبيشل</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -34,22 +34,22 @@
   --border-light: #e2e8f0;
 }
 [data-theme="dark"]{
-  --bg:#0f172a;--sur:#1e293b;
-  --sh:0 10px 25px -5px rgba(0,0,0,.3);
-  --shm:0 4px 6px -1px rgba(0,0,0,.2);
-  --shs:0 1px 3px 0 rgba(0,0,0,.2);
-  --tx:#f8fafc;--tx2:#cbd5e1;--mu:#94a3b8;--mu2:#64748b;
-  --sel-bg:#312e81;--sel-tx:#a5b4fc;
-  --nb-hover-bg:#334155;--nb-hover-tx:#f8fafc;
-  --nb-on-bg:#3730a3;--nb-on-tx:#e0e7ff;
-  --border-light: #334155;
-  --bll:#312e81;--blb:#4338ca;
-  --gnl:#064e3b;--gnb:#047857;
-  --rdl:#4c0519;--rdb:#be123c;
-  --orl:#431407;--orb:#c2410c;
-  --pul:#2e1065;--pub:#5b21b6;
-  --aml:#451a03;--amb:#b45309;
-  --tll:#082f49;--tlb:#0369a1;
+  --bg:#202124;--sur:#292a2d;
+  --sh:0 10px 25px -5px rgba(0,0,0,.5);
+  --shm:0 4px 6px -1px rgba(0,0,0,.35);
+  --shs:0 1px 3px 0 rgba(0,0,0,.3);
+  --tx:#e8eaed;--tx2:#bdc1c6;--mu:#9aa0a6;--mu2:#5f6368;
+  --sel-bg:#3c4043;--sel-tx:#8ab4f8;
+  --nb-hover-bg:#3c4043;--nb-hover-tx:#e8eaed;
+  --nb-on-bg:#394457;--nb-on-tx:#8ab4f8;
+  --border-light: #3c4043;
+  --bl:#8ab4f8;--bll:#1a2740;--blb:#2d4a7a;
+  --gnl:#1e3a2e;--gnb:#1e8e3e;
+  --rdl:#3a1c1e;--rdb:#d93025;
+  --orl:#3a2415;--orb:#e37400;
+  --pul:#2a1f3d;--pub:#7c4dff;
+  --aml:#3a2e0a;--amb:#f9ab00;
+  --tll:#0d2a3d;--tlb:#1a73e8;
 }
 :root{--sel-bg:#f1f5f9;--sel-tx:var(--tx)}
 html{font-size:16px}
@@ -57,7 +57,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--tx);min-h
 
 /* LOGIN */
 #ls{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px; background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);}
-[data-theme="dark"] #ls { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); }
+[data-theme="dark"] #ls { background: linear-gradient(135deg, #202124 0%, #292a2d 100%); }
 .lbox{background:var(--sur);border-radius:24px;padding:40px 32px;width:100%;max-width:420px;box-shadow:var(--sh);position:relative; border: 1px solid var(--border-light);}
 [data-theme="dark"] .lbox { border-color: transparent; }
 .llogo{text-align:center;margin-bottom:28px}
@@ -72,6 +72,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--tx);min-h
 .rc-owner{padding:20px 16px}
 .rc-owner .rn{font-size:1.05rem;font-weight:800}
 .rc-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:480px){.rc-row{grid-template-columns:1fr 1fr}}
 .rc-row .rc{padding:12px 8px}
 .rc-row .rn{font-size:.85rem;font-weight:600}
 .rn{font-size:.9rem;font-weight:700;color:var(--tx2); transition: color 0.2s;}
@@ -350,7 +351,7 @@ hr.d{border:none;border-top:1px solid var(--border-light);margin:16px 0}
 
 /* PORTAL */
 #portal{display:none;min-height:100vh;background:linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);padding:24px 16px;align-items:center;justify-content:center}
-[data-theme="dark"] #portal { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); }
+[data-theme="dark"] #portal { background: linear-gradient(135deg, #202124 0%, #292a2d 100%); }
 #portal.on{display:flex;flex-direction:column}
 .portal-box{background:var(--sur);border: 1px solid var(--border-light); border-radius:24px;padding:32px;width:100%;max-width:500px;box-shadow:var(--sh)}
 .portal-title{font-size:1.4rem;font-weight:900;margin-bottom:8px; color: var(--bl); text-align: center;}
@@ -390,7 +391,63 @@ hr.d{border:none;border-top:1px solid var(--border-light);margin:16px 0}
 .no-access h3{font-size:1.1rem;font-weight:800;color:var(--mu);margin-bottom:8px}
 .no-access p{font-size:.9rem;font-weight: 500; color:var(--mu2)}
 
-/* WYSIWYG & A4 Modal Improvements */
+/* ── LOGO ── */
+.llogo-img{width:90px;height:90px;object-fit:contain;border-radius:50%;margin:0 auto 12px;display:block;box-shadow:var(--sh)}
+.welcome-logo{width:64px;height:64px;object-fit:contain;border-radius:50%;display:block;margin:0 auto 8px}
+.sblogo-img{width:36px;height:36px;object-fit:contain;border-radius:50%;margin-left:8px;vertical-align:middle}
+
+/* ── BRANCH LOGIN SCREEN ── */
+#branch-login-scr{display:none;position:fixed;inset:0;background:linear-gradient(135deg,#e0e7ff 0%,#f8fafc 100%);z-index:500;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+[data-theme="dark"] #branch-login-scr{background:linear-gradient(135deg,#202124 0%,#292a2d 100%)}
+#branch-login-scr.on{display:flex}
+.branch-login-box{background:var(--sur);border-radius:20px;padding:32px 24px;width:100%;max-width:400px;box-shadow:var(--sh);border:1px solid var(--border-light)}
+.branch-login-title{font-size:1.2rem;font-weight:800;color:var(--bl);text-align:center;margin-bottom:4px}
+.branch-login-sub{font-size:.8rem;color:var(--mu);text-align:center;margin-bottom:20px}
+.branch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.branch-login-btn{background:var(--bg);border:1px solid var(--border-light);border-radius:var(--r2);padding:16px 10px;font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;color:var(--tx2);text-align:center}
+.branch-login-btn:hover,.branch-login-btn.sel{background:var(--bl);color:#fff;border-color:var(--bl);transform:translateY(-2px)}
+.emp-name-display{background:var(--bll);border:1px solid var(--blb);border-radius:var(--r2);padding:12px 16px;text-align:center;font-size:1rem;font-weight:700;color:var(--bl);margin-top:12px;display:none}
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:600px){
+  html{font-size:14px}
+  .lbox{padding:28px 18px;border-radius:18px;margin:10px}
+  .llogo-img{width:70px;height:70px}
+  .rc-row{grid-template-columns:1fr 1fr;gap:8px}
+  .sidebar{width:100vw}
+  .sidebar.cl{transform:translateX(100vw)}
+  .main{padding:14px 10px}
+  .topbar{padding:0 10px;gap:8px;height:52px}
+  .tbtitle{font-size:.85rem}
+  .tbsearch{max-width:140px}
+  .tbsearch input{padding:7px 10px;font-size:.8rem}
+  .fs-btns{display:none}
+  .card{padding:16px 12px}
+  .stats-grid{grid-template-columns:1fr}
+  .brow{flex-wrap:wrap;gap:8px}
+  .btn{font-size:.82rem;padding:9px 14px}
+  .stat-box{padding:16px 12px}
+  .prbox{padding:18px 14px}
+  .a4-container{width:100%;padding:14mm 10mm;min-height:auto}
+  .mbox{padding:18px 14px}
+  .branch-btns{gap:6px}
+  .branch-btn{padding:8px 12px;font-size:.82rem}
+  .portal-box{padding:20px 14px;border-radius:16px}
+  .ucard{flex-direction:column;align-items:flex-start}
+  .fs-btn{width:24px;height:24px}
+  .rc-owner{padding:16px 12px}
+  .rgrid{gap:8px}
+  .sbh{padding:16px 14px 12px}
+  .sbnav{padding:12px 8px 0}
+  .nb{padding:10px 12px;font-size:.85rem}
+}
+@media(max-width:380px){
+  .lbox{padding:22px 14px}
+  .rc-row{grid-template-columns:1fr 1fr}
+  .branch-grid{grid-template-columns:1fr 1fr}
+}
+
+/* ── WYSIWYG & A4 Modal Improvements ── */
 .wysiwyg-toolbar { display: flex; gap: 5px; margin-bottom: 10px; background: var(--bg); padding: 8px; border: 1px solid var(--border-light); border-radius: 8px; flex-wrap: wrap; }
 .wysiwyg-btn { background: var(--sur); border: 1px solid var(--border-light); padding: 5px 10px; cursor: pointer; font-family: 'Tajawal', sans-serif; border-radius: 4px; font-size: 0.8rem; font-weight: 600; color: var(--tx); transition: background 0.2s; }
 .wysiwyg-btn:hover { background: var(--bll); color: var(--bl); border-color: var(--bl); }
@@ -411,7 +468,10 @@ hr.d{border:none;border-top:1px solid var(--border-light);margin:16px 0}
 <div id="ls">
 <div class="lbox">
   <button class="theme-toggle-login" id="theme-btn-login" onclick="toggleTheme()" title="تبديل النمط">☽</button>
-  <div class="llogo"><h1>اي ام سبيشل</h1><p>نظام إدارة الشكاوى والطلبات</p></div>
+  <div class="llogo">
+    <img src="special.png" alt="Special Logo" class="llogo-img" onerror="this.style.display='none'">
+    <h1>اي ام سبيشل</h1><p>نظام إدارة الشكاوى والطلبات</p>
+  </div>
   <div class="lstep on" id="ls-role">
     <p style="font-size:.85rem;font-weight:600;color:var(--mu);margin-bottom:16px;text-align:center">اختر نوع المستخدم</p>
     <div class="rgrid" id="role-grid"></div>
@@ -424,8 +484,20 @@ hr.d{border:none;border-top:1px solid var(--border-light);margin:16px 0}
     </div>
     <div id="lerr"></div>
   </div>
-  <div class="maint-link"><span onclick="openMaint()">الإدارة الفنية والصيانة</span></div>
+  <div class="maint-link"><span onclick="openMaint()">الإدارة الفنية</span></div>
 </div>
+</div>
+
+<!-- Branch Employee Login Screen -->
+<div id="branch-login-scr">
+  <div class="branch-login-box">
+    <img src="special.png" alt="Logo" class="welcome-logo" onerror="this.style.display='none'">
+    <div class="branch-login-title">اي ام سبيشل</div>
+    <div class="branch-login-sub">اختر الفرع لتسجيل الدخول</div>
+    <div class="branch-grid" id="branch-login-grid"></div>
+    <div class="emp-name-display" id="emp-name-display"></div>
+    <button class="btn" style="width:100%;margin-top:14px;font-size:.85rem" onclick="closeBranchLoginScr()">رجوع</button>
+  </div>
 </div>
 
 <div id="maint-scr">
@@ -469,7 +541,7 @@ hr.d{border:none;border-top:1px solid var(--border-light);margin:16px 0}
   <div class="sbov" id="sbov" onclick="closeSb()"></div>
   <nav class="sidebar cl" id="sidebar">
     <div class="sbh">
-      <div class="sblogo">اي ام سبيشل</div>
+      <div class="sblogo"><img src="special.png" alt="Logo" class="sblogo-img" onerror="this.style.display='none'">اي ام سبيشل</div>
       <div class="sbsub" id="sb-branch-sub"></div>
       <div class="sbuser-row">
         <div class="sbuser" id="sb-user"></div>
@@ -495,10 +567,6 @@ hr.d{border:none;border-top:1px solid var(--border-light);margin:16px 0}
     <button class="mbtn2" onclick="toggleSb()"><span></span><span></span><span></span></button>
     <div class="tbtitle" id="tbtitle">سجل الشكاوى</div>
     
-    <button class="btn" style="margin-right: auto; margin-left: 15px; font-size: 0.8rem; padding: 6px 12px; background: var(--bg); border: 1px solid var(--border-light);" onclick="window.location.href='customer_service.html'">
-       خدمة العملاء ↩
-    </button>
-
     <div class="tbsearch">
       <input type="text" id="gs" placeholder="ابحث بالاسم أو الرقم" oninput="gSearch(this.value)">
       <div class="sdrop" id="gdrop"></div>
@@ -997,8 +1065,24 @@ function openMaint(){
 function closeMaint(){document.getElementById('maint-scr').classList.remove('on');}
 function submitMaintPass(){
   const v=document.getElementById('m-pwd').value;
-  if(v===maintPass){document.getElementById('m-bottom').style.display='none';document.getElementById('m-code-edit').style.display='none';document.getElementById('m-panel').classList.add('on');document.getElementById('m-panel').style.display='block';renderMaintPanel();}
-  else{document.getElementById('m-err').style.display='inline';document.getElementById('m-pwd').value='';setTimeout(()=>document.getElementById('m-err').style.display='none',1200);}
+  // 1994 → دخول خدمة العملاء
+  if(v==='1994'){
+    document.getElementById('maint-scr').classList.remove('on');
+    const csUser=users.find(u=>u.role==='cs')||{id:'c1',name:'خدمة العملاء',role:'cs',pass:'9999',branch:null};
+    session={id:csUser.id,role:'cs',name:csUser.name,branch:null};
+    saveS(session);initApp();
+    return;
+  }
+  // 4991 → دخول الصيانة (1994 مقلوب)
+  if(v==='4991'||v===maintPass){
+    document.getElementById('m-bottom').style.display='none';
+    document.getElementById('m-code-edit').style.display='none';
+    document.getElementById('m-panel').classList.add('on');
+    document.getElementById('m-panel').style.display='block';
+    renderMaintPanel();
+    return;
+  }
+  document.getElementById('m-err').style.display='inline';document.getElementById('m-pwd').value='';setTimeout(()=>document.getElementById('m-err').style.display='none',1200);
 }
 document.addEventListener('keydown',e=>{const ms=document.getElementById('maint-scr');if(!ms.classList.contains('on'))return;if(e.key==='Escape')closeMaint();if(e.key==='Enter'&&document.getElementById('m-bottom').style.display!=='none')submitMaintPass();});
 
@@ -1088,27 +1172,68 @@ function mpDelEmp(br,eid){if(!confirm('Delete?'))return;employees[br]=(employees
 function mpAddEmp(br){const key=br.replace(/\s/g,'_');const inp=document.getElementById(`ep-${key}`);if(!inp||!inp.value.trim())return;if(!employees[br])employees[br]=[];employees[br].push({id:'e'+Date.now(),name:inp.value.trim()});sv();document.getElementById('mp-emp').innerHTML=mpEmpHTML();inp.value='';}
 function mpSaveBWA(br){const key=br.replace(/\s/g,'_');const v=document.getElementById(`bwa-${key}`).value.trim();branchWA[br]=v;sv();}
 
+// ═══ OWNER DYNAMIC PASS ═══
+function getOwnerPass(){const d=new Date();const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');return dd+mm;}
+
 // ═══ AUTH ═══
 let loginRole=null;
+const BRANCHES_LIST=['فرع القصر','فرع سلام مول','فرع الرياض جاليري','فرع ذا ڤيو مول','فرع مركز المملكة','فرع شرق بلازا'];
+const BRANCHES_LABELS=['القصر','سلام مول','الرياض جاليري','ذا ڤيو','المملكة','شرق بلازا'];
+
 function buildRoleGrid(){
-  const ow=users.find(u=>u.role==='owner');
   document.getElementById('role-grid').innerHTML=`
     <div class="rc rc-owner" onclick="selRole('owner',this)">
-      <div class="rn">المالك</div>${ow?`<div class="rs">${ow.name}</div>`:''}
+      <div class="rn">المالك</div>
     </div>
     <div class="rc-row">
-      <div class="rc" onclick="selRole('admin',this)"><div class="rn">الإدارة</div></div>
-      <div class="rc" onclick="selRole('cs',this)"><div class="rn">خدمة العملاء</div></div>
-      <div class="rc" onclick="selRole('branch',this)"><div class="rn">إدارة الفرع</div></div>
+      ${BRANCHES_LIST.map((br,i)=>`<div class="rc" onclick="openBranchEmpLogin('${br}',this)"><div class="rn">${BRANCHES_LABELS[i]}</div></div>`).join('')}
     </div>`;
 }
+
+// Branch Employee Login
+function openBranchEmpLogin(branch, el){
+  document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const scr=document.getElementById('branch-login-scr');
+  scr.classList.add('on');
+  const brEmps=employees[branch]||[];
+  const grid=document.getElementById('branch-login-grid');
+  const display=document.getElementById('emp-name-display');
+  display.style.display='none';
+  if(brEmps.length===0){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;color:var(--mu);font-size:.85rem;padding:20px">لا يوجد موظفون مسجلون لهذا الفرع</div>`;
+    return;
+  }
+  grid.innerHTML=brEmps.map(e=>`<button class="branch-login-btn" onclick="selectBranchEmp('${branch}','${e.id}','${e.name.replace(/'/g,"\\'")}')">${e.name}</button>`).join('');
+}
+function selectBranchEmp(branch,empId,empName){
+  document.querySelectorAll('.branch-login-btn').forEach(b=>b.classList.remove('sel'));
+  event.target.classList.add('sel');
+  const display=document.getElementById('emp-name-display');
+  display.textContent='مرحباً، '+empName;
+  display.style.display='block';
+  // Auto login as branch user for this branch after short delay
+  const bUser=users.find(u=>u.role==='branch'&&u.branch===branch);
+  let matchedUser = bUser || {id:'branch-'+Date.now(),role:'branch',name:empName,branch:branch};
+  setTimeout(()=>{
+    session={id:matchedUser.id,role:'branch',name:empName,branch:branch};
+    saveS(session);
+    document.getElementById('branch-login-scr').classList.remove('on');
+    initApp();
+  },700);
+}
+function closeBranchLoginScr(){
+  document.getElementById('branch-login-scr').classList.remove('on');
+  document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));
+}
+
 function selRole(role,el){
   loginRole=role;document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');
-  const pool=users.filter(u=>u.role===role);
   let html='';
-  if(role==='owner'){html=`<div class="fg"><label class="fl">الرقم السري</label><input class="fi" id="ci-pass" type="password" placeholder="الرقم السري"></div>`;}
-  else if(role==='cs'){html=`<div class="fg"><label class="fl">اسم الموظف</label><input class="fi" id="ci-csname" type="text" placeholder="اكتب اسمك"></div><div class="fg" style="margin-top:12px"><label class="fl">الرقم السري</label><input class="fi" id="ci-pass" type="password" placeholder="الرقم السري"></div>`;}
-  else{html=`<div class="fg"><label class="fl">${role==='admin'?'اسم المدير':'مديرة الفرع'}</label><select class="fsel" id="ci-user"><option value="">-- اختر --</option>${pool.map(u=>`<option value="${u.id}">${u.name}</option>`).join('')}</select></div><div class="fg" style="margin-top:12px"><label class="fl">الرقم السري</label><input class="fi" id="ci-pass" type="password" placeholder="الرقم السري"></div>`;}
+  if(role==='owner'){
+    const digits=getOwnerPass().length;
+    html=`<div class="fg"><label class="fl">الرقم السري</label><input class="fi" id="ci-pass" type="password" placeholder="${'●'.repeat(4)}" maxlength="4" inputmode="numeric" pattern="[0-9]*"></div>`;
+  }
   document.getElementById('cred-fields').innerHTML=html;
   document.getElementById('lerr').style.display='none';
   document.getElementById('ls-role').classList.remove('on');document.getElementById('ls-creds').classList.add('on');
@@ -1118,8 +1243,11 @@ function backRoles(){document.getElementById('ls-creds').classList.remove('on');
 function doLogin(){
   const e=document.getElementById('lerr');const se=s=>{e.textContent=s;e.style.display='block'};
   const pass=(document.getElementById('ci-pass')||{}).value||'';let matched=null;
-  if(loginRole==='owner'){matched=users.find(u=>u.role==='owner'&&u.pass===pass);if(!matched){se('الرقم السري غير صحيح');return;}}
-  else if(loginRole==='cs'){const csname=(document.getElementById('ci-csname')||{}).value.trim();if(!csname){se('يرجى إدخال اسمك');return;}const cu=users.find(u=>u.role==='cs'&&u.pass===pass);if(!cu){se('الرقم السري غير صحيح');return;}matched={...cu,name:csname};}
+  if(loginRole==='owner'){
+    const todayPass=getOwnerPass();
+    if(pass!==todayPass){se('الرقم السري غير صحيح');return;}
+    matched=users.find(u=>u.role==='owner')||{id:'o1',name:'المالك',role:'owner',pass:todayPass,branch:null};
+  }
   else{const uid=(document.getElementById('ci-user')||{}).value;if(!uid){se('يرجى الاختيار أولاً');return;}const u=users.find(x=>x.id===uid);if(!u||u.pass!==pass){se('الرقم السري غير صحيح');return;}matched=u;}
   session={id:matched.id,role:matched.role,name:matched.name,branch:matched.branch||null};saveS(session);initApp();
 }
@@ -1842,7 +1970,7 @@ let fsLevel=parseFloat(localStorage.getItem('ims_fs')||'1');
 function applyFontSize(){document.documentElement.style.fontSize=(fsLevel*16)+'px';document.documentElement.style.setProperty('--fs',fsLevel);const el=document.getElementById('fs-val');if(el)el.textContent=Math.round(fsLevel*100)+'%';localStorage.setItem('ims_fs',fsLevel);}
 function changeFontSize(dir){const steps=[0.8,0.875,0.95,1,1.075,1.15,1.25];const idx=steps.reduce((best,v,i)=>Math.abs(v-fsLevel)<Math.abs(steps[best]-fsLevel)?i:best,0);fsLevel=steps[Math.max(0,Math.min(steps.length-1,idx+dir))];applyFontSize();}
 applyFontSize();
-let isDark=localStorage.getItem('ims_dark')==='1';
+let isDark=localStorage.getItem('ims_dark')==='1'||(localStorage.getItem('ims_dark')===null);
 function applyTheme(){document.documentElement.setAttribute('data-theme',isDark?'dark':'');const icon=isDark?'☼':'☽';['theme-btn-login','theme-btn-app'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=icon;});localStorage.setItem('ims_dark',isDark?'1':'0');}
 function toggleTheme(){isDark=!isDark;applyTheme();}
 applyTheme();
