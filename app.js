@@ -1,4 +1,3 @@
-
 // ═══ PORTAL CHECK ═══
 if(window.location.hash==='#portal'){
   document.getElementById('ls').style.display='none';
@@ -42,7 +41,7 @@ let requests=JSON.parse(localStorage.getItem('ims_r')||'[]');
   if(localStorage.getItem('ims_demo_loaded'))return;
   function daysAgo(d){return new Date(Date.now()-d*86400000).toISOString();}
   const demoComplaints=[
-    {ref:'S032601',branch:'فرع القصر',ctype:'الأسلوب',mobile:'0551234567',client:'نورة السهلي',child:'ريم',desc:'قامت الموظفة بالتحدث مع ابنتي بأسلوب غير لائق وأمام الأطفال الآخرين مما سبب لها إحراجاً شديداً',demand:'الاعتذار الرسمي وضمان عدم تكرار الأمر',hdQ:'no',hdA:null,origin:'داخل الفصل أثناء وقت النشاط',financial:false,hasEmp:true,branchEmployee:'اسمهان (المديرة)',negative:false,negText:'',sentiment:'غاضب',demo:'أم',csnote:'العميلة كانت مضطربة بشكل واضح',gC:'f',gK:'f',status:'تحت المعالجة',ownerPriority:false,adminComment:null,branchComment:'تم التحقق من الحادثة وسيتم توجيه الموظفة',branchComment:'سيتم اتخاذ الإجراء اللازم',audit:[{who:'موظف خدمة العملاء',uid:'c1',role:'cs',ts:daysAgo(5),body:'تم إنشاء الشكوى'}],addedBy:'موظف خدمة العملاء',createdAt:daysAgo(5)},
+    {ref:'S032601',branch:'فرع القصر',ctype:'الأسلوب',mobile:'0551234567',client:'نورة السهلي',child:'ريم',desc:'قامت الموظفة بالتحدث مع ابنتي بأسلوب غير لائق وأمام الأطفال الآخرين مما سبب لها إحراجاً شديداً',demand:'الاعتذار الرسمي وضمان عدم تكرار الأمر',hdQ:'no',hdA:null,origin:'داخل الفصل أثناء وقت النشاط',financial:false,hasEmp:true,branchEmployee:'اسمهان (المديرة)',negative:false,negText:'',sentiment:'غاضب',demo:'أم',csnote:'العميلة كانت مضطربة بشكل واضح',gC:'f',gK:'f',status:'تحت المعالجة',ownerPriority:false,adminComment:null,branchComment:'سيتم اتخاذ الإجراء اللازم',audit:[{who:'موظف خدمة العملاء',uid:'c1',role:'cs',ts:daysAgo(5),body:'تم إنشاء الشكوى'}],addedBy:'موظف خدمة العملاء',createdAt:daysAgo(5)},
   ];
   const demoRequests=[
     {ref:'H032601',client:'سلمى الغامدي',mobile:'0556677889',branch:'فرع القصر',rtype:'استفسار',desc:'أريد الاستفسار عن إمكانية تسجيل طفلي في برنامج الدمج...',sentiment:'محايد',demo:'أم',csnote:'',gC:'f',status:'تم استلام الطلب',audit:[{who:'موظف خدمة العملاء',uid:'c1',role:'cs',ts:daysAgo(3),body:'تم إنشاء الطلب'}],addedBy:'موظف خدمة العملاء',createdAt:daysAgo(3)},
@@ -135,7 +134,7 @@ function buildReqClientMsg(r){
 
 function buildSummary(c,withComments=false){
   const isMc=c.gC==='m',isMk=c.gK==='m';
-  const submitVerb='قدمها'; 
+  const submitVerb='قدمها';
   const clientLabel=isMc?'العميل':'العميلة';
   const parentLabel=isMc?'والد':'والدة';
   const childLabel=isMk?'الطفل':'الطفلة';
@@ -192,8 +191,216 @@ function updateDots(){
      else if(r==='branch') wCount = warnings.filter(w=>w.branch===session.branch && w.status==='approved' && (!w.seenBy||!w.seenBy[session.id])).length;
      setDot('nav-warnings', wCount>0);
   }
+  // تحديث نقاط الشريط السفلي أيضاً
+  updateBNavDots();
 }
 function setDot(navId,show){const nb=document.getElementById(navId);if(!nb)return;nb.classList.toggle('has-new',show);}
+
+// ═══════════════════════════════════════════════════════
+// ═══ BOTTOM NAV — شريط التنقل السفلي للجوال ═══
+// ═══════════════════════════════════════════════════════
+
+/**
+ * تعريف كل عنصر في الشريط السفلي حسب الدور
+ * كل عنصر: { id, icon, label, page, roles, inDrawer }
+ *   - inDrawer: true  → يظهر داخل درج "المزيد"
+ *   - inDrawer: false → يظهر مباشرة في الشريط السفلي
+ */
+function getBNavItems(role){
+  const isCsOrMaint = role==='cs'||role==='maint';
+  const isBranch    = role==='branch';
+  const isOwner     = role==='owner';
+  const isAdmin     = role==='admin';
+
+  // قائمة كاملة بكل الصفحات وترتيبها
+  const all = [
+    { id:'bnav-list',      icon:'📋', label:'الشكاوى',    page:'list',       show: true,                       inDrawer: false },
+    { id:'bnav-new',       icon:'✏️',  label:'تسجيل',     page:'new',        show: isCsOrMaint,                inDrawer: false },
+    { id:'bnav-reqlist',   icon:'📂', label:'الطلبات',    page:'reqlist',    show: isCsOrMaint,                inDrawer: false },
+    { id:'bnav-branchmsgs',icon:'💬', label:'الرسائل',    page:'branchmsgs', show: isBranch,                   inDrawer: false },
+    { id:'bnav-warnings',  icon:'⚠️',  label:'الإنذارات', page:'warnings',   show: role!=='cs',                inDrawer: false },
+    { id:'bnav-msgs',      icon:'📩', label:'العملاء',    page:'msgs',       show: isCsOrMaint,                inDrawer: true  },
+    { id:'bnav-newreq',    icon:'📝', label:'طلب جديد',   page:'newreq',     show: isCsOrMaint,                inDrawer: true  },
+    { id:'bnav-stats',     icon:'📊', label:'الإحصائيات', page:'stats',      show: !isBranch&&role!=='maint',  inDrawer: true  },
+    { id:'bnav-filter',    icon:'🔍', label:'التحليل',    page:'filter',     show: !isBranch&&!isOwner,        inDrawer: true  },
+    { id:'bnav-rep',       icon:'🛡️',  label:'السمعة',    page:'rep',        show: true,                       inDrawer: true  },
+    { id:'bnav-settings',  icon:'⚙️',  label:'المستخدمين',page:'settings',   show: role==='maint',             inDrawer: true  },
+    { id:'bnav-chpass',    icon:'🔑', label:'كلمة السر',  page:'chpass',     show: true,                       inDrawer: true  },
+  ];
+
+  return all.filter(x=>x.show);
+}
+
+/**
+ * بناء الشريط السفلي ديناميكياً بعد تسجيل الدخول
+ */
+function buildBottomNav(){
+  const nav = document.getElementById('bottom-nav');
+  const drawerGrid = document.getElementById('bnav-drawer-grid');
+  if(!nav || !drawerGrid || !session) return;
+
+  const role = session.role;
+  const items = getBNavItems(role);
+
+  // فصل العناصر: مباشرة في الشريط vs في الدرج
+  const mainItems   = items.filter(x=>!x.inDrawer);
+  const drawerItems = items.filter(x=>x.inDrawer);
+
+  // ── بناء الشريط الداخلي ──
+  let mainHTML = '<div class="bnav-inner">';
+
+  mainItems.forEach(item=>{
+    mainHTML += `
+      <button class="bnav-btn" id="${item.id}" onclick="bnavGo('${item.page}')" aria-label="${item.label}">
+        <span class="bnav-dot"></span>
+        <span class="bni">${item.icon}</span>
+        <span class="bnl">${item.label}</span>
+      </button>`;
+  });
+
+  // زر "المزيد" إن وُجدت عناصر في الدرج
+  if(drawerItems.length > 0){
+    mainHTML += `
+      <button class="bnav-btn bnav-more-btn" id="bnav-more" onclick="toggleMoreDrawer()" aria-label="المزيد">
+        <span class="bni">⋯</span>
+        <span class="bnl">المزيد</span>
+      </button>`;
+  }
+
+  mainHTML += '</div>';
+  nav.innerHTML = mainHTML;
+
+  // ── بناء عناصر الدرج ──
+  let drawerHTML = '';
+  drawerItems.forEach(item=>{
+    drawerHTML += `
+      <button class="bnav-drawer-item" id="${item.id}-d" onclick="bnavGo('${item.page}');closeMoreDrawer();" aria-label="${item.label}">
+        <span class="di-dot"></span>
+        <span class="di-icon">${item.icon}</span>
+        <span>${item.label}</span>
+      </button>`;
+  });
+
+  // زر تسجيل الخروج في الدرج دائماً
+  drawerHTML += `
+    <button class="bnav-drawer-item" onclick="logout()" aria-label="تسجيل الخروج" style="background:var(--rdl);border-color:var(--rdb);color:var(--rd);">
+      <span class="di-icon">🚪</span>
+      <span>خروج</span>
+    </button>`;
+
+  drawerGrid.innerHTML = drawerHTML;
+
+  // تحديث الحالة الأولية
+  updateBNavActive('list');
+}
+
+/**
+ * التنقل عبر الشريط السفلي
+ */
+function bnavGo(page){
+  goPage(page);
+}
+
+/**
+ * تحديث الزر النشط في الشريط السفلي
+ */
+function updateBNavActive(page){
+  // الشريط الرئيسي
+  document.querySelectorAll('.bnav-btn').forEach(btn=>{
+    btn.classList.remove('on');
+  });
+  const activeMain = document.getElementById('bnav-'+page);
+  if(activeMain) activeMain.classList.add('on');
+
+  // الدرج
+  document.querySelectorAll('.bnav-drawer-item').forEach(btn=>{
+    btn.classList.remove('on');
+  });
+  const activeDrawer = document.getElementById('bnav-'+page+'-d');
+  if(activeDrawer) activeDrawer.classList.add('on');
+
+  // إذا كانت الصفحة النشطة في الدرج → لوّن زر "المزيد" بلون النشاط
+  const moreBtn = document.getElementById('bnav-more');
+  if(moreBtn){
+    moreBtn.classList.toggle('on', !!activeDrawer && !activeMain);
+  }
+}
+
+/**
+ * تحديث نقاط الإشعارات في الشريط السفلي
+ */
+function updateBNavDots(){
+  if(!session) return;
+  const r = session.role;
+
+  // دالة مساعدة لضبط نقطة زر معين
+  function setBNavDot(page, show){
+    // في الشريط الرئيسي
+    const mainBtn = document.getElementById('bnav-'+page);
+    if(mainBtn){
+      const dot = mainBtn.querySelector('.bnav-dot');
+      if(dot) dot.style.display = show ? 'block' : 'none';
+      mainBtn.classList.toggle('has-new', show);
+    }
+    // في الدرج
+    const drawerBtn = document.getElementById('bnav-'+page+'-d');
+    if(drawerBtn){
+      const dot = drawerBtn.querySelector('.di-dot');
+      if(dot) dot.style.display = show ? 'block' : 'none';
+      drawerBtn.classList.toggle('has-new', show);
+    }
+  }
+
+  // الشكاوى الجديدة
+  const newComplaints = complaints.filter(c=>!c.seenBy||!c.seenBy[session.id]).length > 0;
+  setBNavDot('list', newComplaints);
+
+  // الطلبات الجديدة
+  if(r==='cs'||r==='maint'){
+    const newReqs = requests.filter(rq=>!rq.seenBy||!rq.seenBy[session.id]).length > 0;
+    setBNavDot('reqlist', newReqs);
+    // رسائل العملاء
+    const newMsgs = messages.filter(m=>!m.converted).length > 0;
+    setBNavDot('msgs', newMsgs);
+  }
+
+  // رسائل الفرع
+  if(r==='branch'){
+    const newBranchMsgs = branchMsgs.filter(bm=>bm.branch===session.branch&&!bm.seenBy?.[session.id]).length > 0;
+    setBNavDot('branchmsgs', newBranchMsgs);
+  }
+
+  // الإنذارات
+  if(r!=='cs'){
+    let wCount=0;
+    if(r==='owner'||r==='admin') wCount = warnings.filter(w=>w.status==='draft').length;
+    else if(r==='branch') wCount = warnings.filter(w=>w.branch===session.branch && w.status==='approved' && (!w.seenBy||!w.seenBy[session.id])).length;
+    setBNavDot('warnings', wCount>0);
+  }
+}
+
+/**
+ * فتح/إغلاق درج "المزيد"
+ */
+function toggleMoreDrawer(){
+  const drawer  = document.getElementById('bnav-drawer');
+  const overlay = document.getElementById('bnav-overlay');
+  if(!drawer || !overlay) return;
+  const isOpen = drawer.classList.contains('on');
+  if(isOpen){
+    closeMoreDrawer();
+  } else {
+    drawer.classList.add('on');
+    overlay.classList.add('on');
+  }
+}
+
+function closeMoreDrawer(){
+  const drawer  = document.getElementById('bnav-drawer');
+  const overlay = document.getElementById('bnav-overlay');
+  if(drawer)  drawer.classList.remove('on');
+  if(overlay) overlay.classList.remove('on');
+}
 
 // ═══ PORTAL ═══
 let portalSelectedBranch='';
@@ -222,7 +429,6 @@ function openMaint(){
 function closeMaint(){document.getElementById('maint-scr').classList.remove('on');}
 function submitMaintPass(){
   const v=document.getElementById('m-pwd').value;
-  // 1994 → دخول خدمة العملاء
   if(v==='1994'){
     document.getElementById('maint-scr').classList.remove('on');
     const csUser=users.find(u=>u.role==='cs')||{id:'c1',name:'خدمة العملاء',role:'cs',pass:'9999',branch:null};
@@ -230,7 +436,6 @@ function submitMaintPass(){
     saveS(session);initApp();
     return;
   }
-  // 4991 → دخول الصيانة (1994 مقلوب)
   if(v==='4991'||v===maintPass){
     document.getElementById('m-bottom').style.display='none';
     document.getElementById('m-code-edit').style.display='none';
@@ -347,7 +552,6 @@ function buildRoleGrid(){
     </div>`;
 }
 
-// Branch Employee Login
 function openBranchEmpLogin(branch, el){
   document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
@@ -369,7 +573,6 @@ function selectBranchEmp(branch,empId,empName){
   const display=document.getElementById('emp-name-display');
   display.textContent='مرحباً، '+empName;
   display.style.display='block';
-  // Auto login as branch user for this branch after short delay
   const bUser=users.find(u=>u.role==='branch'&&u.branch===branch);
   let matchedUser = bUser || {id:'branch-'+Date.now(),role:'branch',name:empName,branch:branch};
   setTimeout(()=>{
@@ -388,7 +591,6 @@ function selRole(role,el){
   loginRole=role;document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');
   let html='';
   if(role==='owner'){
-    const digits=getOwnerPass().length;
     html=`<div class="fg"><label class="fl">الرقم السري</label><input class="fi" id="ci-pass" type="password" placeholder="${'●'.repeat(4)}" maxlength="4" inputmode="numeric" pattern="[0-9]*"></div>`;
   }
   document.getElementById('cred-fields').innerHTML=html;
@@ -409,7 +611,18 @@ function doLogin(){
   session={id:matched.id,role:matched.role,name:matched.name,branch:matched.branch||null};saveS(session);initApp();
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('ls-creds').classList.contains('on'))doLogin();});
-function logout(){session=null;localStorage.removeItem('ims_s');document.getElementById('app').style.display='none';document.getElementById('ls').style.display='flex';document.getElementById('ls-creds').classList.remove('on');document.getElementById('ls-role').classList.add('on');document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));closeSb();}
+
+function logout(){
+  session=null;
+  localStorage.removeItem('ims_s');
+  document.getElementById('app').style.display='none';
+  document.getElementById('ls').style.display='flex';
+  document.getElementById('ls-creds').classList.remove('on');
+  document.getElementById('ls-role').classList.add('on');
+  document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));
+  closeSb();
+  closeMoreDrawer();
+}
 function saveMyPass(){
   const n=document.getElementById('cp-new').value,c2=document.getElementById('cp-confirm').value;
   const errEl=document.getElementById('cp-err');errEl.style.display='none';
@@ -422,7 +635,8 @@ function saveMyPass(){
 
 function initApp(){
   runAuto();renderAllForms();buildRoleGrid();
-  document.getElementById('ls').style.display='none';document.getElementById('app').style.display='block';
+  document.getElementById('ls').style.display='none';
+  document.getElementById('app').style.display='block';
   const r=session.role;
   const rl=r==='owner'?'المالك':r==='admin'?'الإدارة':r==='branch'?'مديرة الفرع':r==='maint'?'الصيانة':'خدمة العملاء';
   document.getElementById('sb-user').textContent=session.name+' — '+rl;
@@ -438,8 +652,11 @@ function initApp(){
   document.getElementById('nav-rep').classList.remove('hid');
   document.getElementById('nav-settings').classList.toggle('hid',r!=='maint');
   document.getElementById('nav-stats').classList.toggle('hid',r==='branch'||r==='maint');
-  document.getElementById('nav-warnings').classList.toggle('hid',r==='cs'); // Show for Owner, Admin, Branch, Maint
-  
+  document.getElementById('nav-warnings').classList.toggle('hid',r==='cs');
+
+  // ── بناء الشريط السفلي ──
+  buildBottomNav();
+
   genRefUI();genReqRefUI();renderList();goPage('list');
   setInterval(updateDots,5000);updateDots();
 }
@@ -479,6 +696,8 @@ function goPage(p){
   if(p==='newreq')genReqRefUI();
   if(session){if(!pageSeen[session.id])pageSeen[session.id]={};pageSeen[session.id][p]=nowISO();savePSeen();}
   closeSb();
+  // تحديث الزر النشط في الشريط السفلي
+  updateBNavActive(p);
   setTimeout(updateDots,300);
 }
 
@@ -610,8 +829,6 @@ function renderOwnerDetail(c,inner){
 function sendOwnerWarning(ref){
   const c=complaints.find(x=>x.ref===ref);if(!c||!c.branchEmployee)return;
   const emp=c.branchEmployee;
-  
-  // Prevent Duplicates
   const existing = warnings.find(w => w.ref === ref && w.emp === emp);
   if(existing) {
      showToast('يوجد إنذار مسجل مسبقاً لهذه الشكوى والموظفة!', 'err');
@@ -619,7 +836,6 @@ function sendOwnerWarning(ref){
      setTimeout(() => reviewA4(existing.id), 500);
      return;
   }
-
   const prevWarns=warnings.filter(w=>w.emp===emp && w.status !== 'excluded');
   let wType='first';
   if(prevWarns.length>0){
@@ -627,10 +843,7 @@ function sendOwnerWarning(ref){
     wType=sameType?'repeat':'different';
   }
   const title = wType==='first'?'لفت نظر إداري':(wType==='repeat'?'إنذار كتابي - تكرار مخالفة':'إنذار كتابي - تعدد مخالفات');
-
-  // Generating HTML instead of plain text for WYSIWYG
   let text = `إلى الموظفة: <strong>${emp}</strong> المحترمة،<br><br>تحية طيبة وبعد،<br><br>`;
-  
   if(wType==='first'){
      text += `بناءً على الشكوى الواردة إلينا برقم (<strong>${c.ref}</strong>) وتاريخ <strong>${fmtShort(c.createdAt)}</strong> بخصوص (<strong>${c.ctype||'مخالفة لسياسات العمل'}</strong>)، وبعد التحقق من التفاصيل الآتية:<br><br><span style="color:#475569; font-style:italic;">"${c.desc}"</span><br><br>فإننا نوجه إليكم <strong>لفت النظر هذا</strong>، مؤكدين على أهمية الالتزام التام بسياسات العمل ومعايير الجودة المعتمدة لدينا. نأمل منكم تلافي هذا القصور مستقبلاً لتجنب اتخاذ إجراءات إدارية أشد.`;
   }else if(wType==='repeat'){
@@ -639,24 +852,12 @@ function sendOwnerWarning(ref){
      text += `لوحظ مؤخراً تعدد الملاحظات على أدائكم، وآخرها الشكوى الواردة برقم (<strong>${c.ref}</strong>) وتاريخ <strong>${fmtShort(c.createdAt)}</strong> بخصوص (<strong>${c.ctype||'مخالفة لسياسات العمل'}</strong>) حيث تبين:<br><br><span style="color:#475569; font-style:italic;">"${c.desc}"</span><br><br>وعليه، نوجه إليكم هذا <strong>الإنذار الكتابي لتراكم المخالفات</strong>، ونؤكد على ضرورة تحسين الأداء والالتزام المهني التام بكافة التوجيهات، تفادياً لأي إجراءات تأديبية لاحقة قد تصل إلى إنهاء الخدمات.`;
   }
   text += `<br><br><br>مع خالص التحيات،<br><strong>الإدارة</strong>`;
-
-  const w = {
-    id: 'W'+Date.now(),
-    ref: c.ref,
-    emp: emp,
-    branch: c.branch,
-    ctype: c.ctype,
-    title: title,
-    text: text, // Stored as HTML
-    ts: nowISO(),
-    status: 'draft' // status can be: draft, approved, revoked, excluded
-  };
+  const w = {id: 'W'+Date.now(),ref: c.ref,emp: emp,branch: c.branch,ctype: c.ctype,title: title,text: text,ts: nowISO(),status: 'draft'};
   warnings.unshift(w);
   localStorage.setItem('ims_w',JSON.stringify(warnings));
-
   goPage('warnings');
   showToast('تم تجهيز مسودة لفت النظر، يرجى المراجعة للتعديل أو الاعتماد','ok');
-  setTimeout(() => reviewA4(w.id), 500); // Open preview immediately
+  setTimeout(() => reviewA4(w.id), 500);
 }
 
 function requestClarification(ref){
@@ -849,51 +1050,36 @@ function goToComplaintFromMsg(ref){
   setTimeout(()=>{showDetail(ref);setTimeout(()=>{const sumSec=document.getElementById('summary-sec');if(sumSec&&sumSec.style.display==='none'){toggleDetailMode(ref);}},300);},120);
 }
 
-// ═══ WARNINGS TAB & WYSIWYG ═══
+// ═══ WARNINGS ═══
 function renderWarnings(){
   const el=document.getElementById('warnings-content');
   const r=session.role;
   let vis = warnings;
-  
-  // Branch only sees approved warnings for their branch
   if(r==='branch') vis=warnings.filter(w=>w.branch===session.branch && w.status==='approved');
-  // Hide excluded from everyone except those who can review
   if(r!=='owner' && r!=='admin' && r!=='maint') vis = vis.filter(w=>w.status !== 'excluded');
-
   if(!vis.length){el.innerHTML=`<div class="empty"><p>لا توجد إنذارات مسجلة</p></div>`;return;}
-
-  // Mark unseen as seen
   vis.forEach(w=>{
       if(!w.seenBy) w.seenBy={};
-      if(!w.seenBy[session.id]){
-         w.seenBy[session.id]=nowISO();
-      }
+      if(!w.seenBy[session.id]){ w.seenBy[session.id]=nowISO(); }
   });
   localStorage.setItem('ims_w',JSON.stringify(warnings));
-
   el.innerHTML=vis.map(w=>{
     let badge = ''; let border = '';
     if(w.status === 'draft') { badge = '<span class="badge bam">بانتظار المراجعة ⏳</span>'; border = 'border-right:5px solid var(--am)'; }
     else if(w.status === 'approved') { badge = '<span class="badge bg">معتمد - تم الإرسال للموظفة ✔️</span>'; border = 'border-right:5px solid var(--gn)'; }
     else if(w.status === 'revoked') { badge = '<span class="badge bo">مسحوب ↩️</span>'; border = 'border-right:5px solid var(--or)'; }
     else if(w.status === 'excluded') { badge = '<span class="badge bgr">مستبعد ❌</span>'; border = 'border-right:5px solid var(--mu2)'; }
-
     return `
     <div class="card" style="margin-bottom:12px; padding:20px; ${border}">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
         <div>
           <div style="font-weight:800;font-size:1.1rem;color:var(--tx)">${w.emp} <span style="font-size:.85rem;color:var(--mu); font-weight:600;">(${w.branch})</span></div>
           <div style="font-size:.9rem;color:var(--tx2);margin-top:4px; font-weight:600;">${w.title} - للشكوى رقم: ${w.ref}</div>
-          <div style="font-size:.8rem;color:var(--mu);margin-top:8px; display:flex; gap:10px; align-items:center;">
-             ${badge} <span style="color:var(--mu2)">${fmtShort(w.ts)}</span>
-          </div>
+          <div style="font-size:.8rem;color:var(--mu);margin-top:8px; display:flex; gap:10px; align-items:center;">${badge} <span style="color:var(--mu2)">${fmtShort(w.ts)}</span></div>
         </div>
-        <div class="brow">
-          <button class="btn pri" onclick="reviewA4('${w.id}', false)">معاينة المستند</button>
-        </div>
+        <div class="brow"><button class="btn pri" onclick="reviewA4('${w.id}', false)">معاينة المستند</button></div>
       </div>
-    </div>
-  `}).join('');
+    </div>`}).join('');
   setTimeout(updateDots,200);
 }
 
@@ -901,143 +1087,60 @@ let currentA4 = null;
 function reviewA4(id, editMode = false){
   currentA4 = warnings.find(w=>w.id===id);
   if(!currentA4)return;
-  
   document.getElementById('a4-title').textContent = currentA4.title;
-  // Load HTML Content
   document.getElementById('a4-content').innerHTML = currentA4.text;
   document.getElementById('a4-date').textContent = fmtShort(currentA4.ts);
-  
   const sigEl = document.getElementById('a4-sig-img');
-  if(signatureBase64 && currentA4.status==='approved'){
-     sigEl.src = signatureBase64;
-     sigEl.style.display = 'inline-block';
-  } else {
-     sigEl.style.display = 'none';
-  }
-
+  if(signatureBase64 && currentA4.status==='approved'){sigEl.src = signatureBase64;sigEl.style.display = 'inline-block';}else{sigEl.style.display = 'none';}
   const tb = document.getElementById('a4-toolbar');
   const contentArea = document.getElementById('a4-content');
   let actionsHTML='';
-
   if(editMode) {
-      tb.style.display = 'flex';
-      contentArea.contentEditable = "true";
-      contentArea.focus();
-      actionsHTML = `
-        <button class="btn pri" onclick="saveWarningText('${id}')">حفظ التعديلات</button>
-        <button class="btn" onclick="reviewA4('${id}', false)">إلغاء التعديل</button>
-      `;
+      tb.style.display = 'flex';contentArea.contentEditable = "true";contentArea.focus();
+      actionsHTML = `<button class="btn pri" onclick="saveWarningText('${id}')">حفظ التعديلات</button><button class="btn" onclick="reviewA4('${id}', false)">إلغاء التعديل</button>`;
   } else {
-      tb.style.display = 'none';
-      contentArea.contentEditable = "false";
-      
-      const r = session.role;
-      const canManage = (r==='owner' || r==='admin' || r==='maint');
-
+      tb.style.display = 'none';contentArea.contentEditable = "false";
+      const r = session.role;const canManage = (r==='owner' || r==='admin' || r==='maint');
       if((currentA4.status==='draft' || currentA4.status==='revoked') && canManage){
-         actionsHTML = `
-           <button class="btn pri" onclick="approveWarning('${id}')">اعتماد وإرسال</button>
-           <button class="btn teal" onclick="reviewA4('${id}', true)">تعديل النص</button>
-           <button class="btn dan" onclick="excludeWarning('${id}')">استبعاد</button>
-           <button class="btn" onclick="closeA4()">إغلاق</button>
-         `;
+         actionsHTML = `<button class="btn pri" onclick="approveWarning('${id}')">اعتماد وإرسال</button><button class="btn teal" onclick="reviewA4('${id}', true)">تعديل النص</button><button class="btn dan" onclick="excludeWarning('${id}')">استبعاد</button><button class="btn" onclick="closeA4()">إغلاق</button>`;
       } else if(currentA4.status==='approved') {
-         actionsHTML = `
-           ${canManage ? `<button class="btn amb" onclick="revokeWarning('${id}')">سحب الإنذار</button>` : ''}
-           <button class="btn gn" onclick="downloadPDF()">تنزيل ملف PDF</button>
-           <button class="btn" onclick="closeA4()">إغلاق</button>
-         `;
+         actionsHTML = `${canManage ? `<button class="btn amb" onclick="revokeWarning('${id}')">سحب الإنذار</button>` : ''}<button class="btn gn" onclick="downloadPDF()">تنزيل ملف PDF</button><button class="btn" onclick="closeA4()">إغلاق</button>`;
       } else {
-         // Excluded state or read-only
          actionsHTML = `<button class="btn" onclick="closeA4()">إغلاق</button>`;
       }
   }
-
   document.getElementById('a4-actions').innerHTML = actionsHTML;
   document.getElementById('a4-modal').classList.add('on');
 }
-
-function execCmd(command, value = null) {
-   document.execCommand(command, false, value);
-   document.getElementById('a4-content').focus();
-}
-
-function saveWarningText(id) {
-   const w = warnings.find(x=>x.id===id); if(!w)return;
-   w.text = document.getElementById('a4-content').innerHTML; // Save Edited HTML
-   localStorage.setItem('ims_w',JSON.stringify(warnings));
-   reviewA4(id, false); // Return to preview mode
-   showToast('تم حفظ التعديلات بنجاح', 'ok');
-}
-
-function closeA4(){ 
-   document.getElementById('a4-modal').classList.remove('on'); 
-   document.getElementById('a4-content').contentEditable = "false";
-   document.getElementById('a4-toolbar').style.display = 'none';
-}
-
+function execCmd(command, value = null) {document.execCommand(command, false, value);document.getElementById('a4-content').focus();}
+function saveWarningText(id) {const w = warnings.find(x=>x.id===id); if(!w)return;w.text = document.getElementById('a4-content').innerHTML;localStorage.setItem('ims_w',JSON.stringify(warnings));reviewA4(id, false);showToast('تم حفظ التعديلات بنجاح', 'ok');}
+function closeA4(){document.getElementById('a4-modal').classList.remove('on');document.getElementById('a4-content').contentEditable = "false";document.getElementById('a4-toolbar').style.display = 'none';}
 function approveWarning(id){
    const w = warnings.find(x=>x.id===id); if(!w)return;
-   w.status = 'approved';
-   localStorage.setItem('ims_w',JSON.stringify(warnings));
-   
-   // update complaint audit log
+   w.status = 'approved';localStorage.setItem('ims_w',JSON.stringify(warnings));
    const c = complaints.find(x=>x.ref===w.ref);
-   if(c){
-     c.audit.push({who:session.name,uid:session.id,role:session.role,ts:nowISO(),body:`تم اعتماد "${w.title}" للموظفة ${w.emp}`});
-     saveC();
-     const ownerName=users.find(u=>u.role==='owner')?.name||session.name;
-     const bm={id:'bm-'+Date.now(),branch:c.branch,complaintRef:c.ref,empName:c.branchEmployee,from:ownerName,ts:nowISO(),seenBy:{},text:`تم إصدار واعتماد "${w.title}" للموظفة ${c.branchEmployee} وهو متاح للتحميل من سجل الإنذارات.`,type:'warning'};
-     branchMsgs.unshift(bm);saveBM();
-   }
-   
-   reviewA4(id, false); // refresh modal buttons
-   renderWarnings();
-   showToast('تم اعتماد الإنذار بنجاح وتم الإرسال للموظفة','ok');
-   updateDots();
+   if(c){c.audit.push({who:session.name,uid:session.id,role:session.role,ts:nowISO(),body:`تم اعتماد "${w.title}" للموظفة ${w.emp}`});saveC();const ownerName=users.find(u=>u.role==='owner')?.name||session.name;const bm={id:'bm-'+Date.now(),branch:c.branch,complaintRef:c.ref,empName:c.branchEmployee,from:ownerName,ts:nowISO(),seenBy:{},text:`تم إصدار واعتماد "${w.title}" للموظفة ${c.branchEmployee} وهو متاح للتحميل من سجل الإنذارات.`,type:'warning'};branchMsgs.unshift(bm);saveBM();}
+   reviewA4(id, false);renderWarnings();showToast('تم اعتماد الإنذار بنجاح وتم الإرسال للموظفة','ok');updateDots();
 }
-
 function revokeWarning(id){
-   if(!confirm('هل أنت متأكد من سحب هذا الإنذار؟ سيتم إخفاؤه من لوحة مديرة الفرع وتعود حالته إلى مسودة.')) return;
+   if(!confirm('هل أنت متأكد من سحب هذا الإنذار؟'))return;
    const w = warnings.find(x=>x.id===id); if(!w)return;
-   w.status = 'revoked';
-   localStorage.setItem('ims_w',JSON.stringify(warnings));
-   
+   w.status = 'revoked';localStorage.setItem('ims_w',JSON.stringify(warnings));
    const c = complaints.find(x=>x.ref===w.ref);
-   if(c){
-     c.audit.push({who:session.name,uid:session.id,role:session.role,ts:nowISO(),body:`تم سحب وإلغاء إرسال "${w.title}" للموظفة ${w.emp}`});
-     saveC();
-   }
-   
-   reviewA4(id, false);
-   renderWarnings();
-   showToast('تم سحب الإنذار، وعاد إلى حالة المسودة','ok');
+   if(c){c.audit.push({who:session.name,uid:session.id,role:session.role,ts:nowISO(),body:`تم سحب وإلغاء إرسال "${w.title}" للموظفة ${w.emp}`});saveC();}
+   reviewA4(id, false);renderWarnings();showToast('تم سحب الإنذار، وعاد إلى حالة المسودة','ok');
 }
-
 function excludeWarning(id) {
-   if(!confirm('هل أنت متأكد من استبعاد هذا الإنذار بشكل نهائي؟')) return;
+   if(!confirm('هل أنت متأكد من استبعاد هذا الإنذار بشكل نهائي؟'))return;
    const w = warnings.find(x=>x.id===id); if(!w)return;
-   w.status = 'excluded';
-   localStorage.setItem('ims_w',JSON.stringify(warnings));
-   
-   closeA4();
-   renderWarnings();
-   showToast('تم استبعاد الإنذار','ok');
+   w.status = 'excluded';localStorage.setItem('ims_w',JSON.stringify(warnings));
+   closeA4();renderWarnings();showToast('تم استبعاد الإنذار','ok');
 }
-
 function downloadPDF(){
    const element = document.getElementById('a4-document');
-   const opt = {
-     margin:       [0, 0, 0, 0],
-     filename:     `إنذار_${currentA4.emp.replace(/\s/g,'_')}.pdf`,
-     image:        { type: 'jpeg', quality: 0.98 },
-     html2canvas:  { scale: 2, useCORS: true, logging: false },
-     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-   };
+   const opt = {margin:[0,0,0,0],filename:`إنذار_${currentA4.emp.replace(/\s/g,'_')}.pdf`,image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true,logging:false},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
    showToast('جاري تجهيز وتحميل الملف...', 'ok');
-   html2pdf().set(opt).from(element).save().then(()=>{
-       showToast('تم التحميل بنجاح', 'ok');
-   });
+   html2pdf().set(opt).from(element).save().then(()=>{showToast('تم التحميل بنجاح', 'ok');});
 }
 
 // ═══ STATS ═══
